@@ -48,6 +48,12 @@ const routes = [
     name: 'Wishlist',
     component: () => import('../views/Wishlist.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/financeiro',
+    name: 'Finance',
+    component: () => import('../views/Finance.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 

@@ -131,7 +131,7 @@
       <!-- Wishlist Reference Card -->
       <router-link 
         to="/lista-de-desejos" 
-        class="w-full mb-8 group relative overflow-hidden rounded-2xl bg-linear-to-r from-purple-500 to-violet-500 p-[2px] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-200"
+        class="w-full mb-4 group relative overflow-hidden rounded-2xl bg-linear-to-r from-purple-500 to-violet-500 p-[2px] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-200"
       >
         <div class="flex items-center justify-between bg-white px-6 py-5 rounded-[14px] transition-all duration-300 group-hover:bg-opacity-0">
           <div class="flex items-center gap-4">
@@ -143,6 +143,29 @@
             <div>
               <h3 class="font-bold text-gray-800 text-lg group-hover:text-white transition-colors duration-300">Lista de Desejos</h3>
               <p class="text-sm text-gray-500 group-hover:text-purple-100 transition-colors duration-300">Planeje suas compras</p>
+            </div>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-300 group-hover:text-white transition-all duration-300 transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </router-link>
+
+      <!-- Financial Planner Reference Card -->
+      <router-link 
+        to="/financeiro" 
+        class="w-full mb-8 group relative overflow-hidden rounded-2xl bg-linear-to-r from-emerald-500 to-teal-500 p-[2px] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-200"
+      >
+        <div class="flex items-center justify-between bg-white px-6 py-5 rounded-[14px] transition-all duration-300 group-hover:bg-opacity-0">
+          <div class="flex items-center gap-4">
+            <div class="bg-emerald-100 p-3 rounded-xl text-emerald-600 group-hover:bg-white/20 group-hover:text-white transition-colors duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-bold text-gray-800 text-lg group-hover:text-white transition-colors duration-300">Planejamento Financeiro</h3>
+              <p class="text-sm text-gray-500 group-hover:text-emerald-100 transition-colors duration-300">Controle por mês/ano</p>
             </div>
           </div>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-300 group-hover:text-white transition-all duration-300 transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
