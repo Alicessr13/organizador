@@ -39,7 +39,7 @@
       <!-- Weekly Habits Reference Card -->
       <router-link 
         to="/habitos-semanais" 
-        class="w-full mb-8 group relative overflow-hidden rounded-2xl bg-linear-to-r from-teal-500 to-emerald-500 p-[2px] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-teal-200"
+        class="w-full mb-4 group relative overflow-hidden rounded-2xl bg-linear-to-r from-teal-500 to-emerald-500 p-[2px] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-teal-200"
       >
         <div class="flex items-center justify-between bg-white px-6 py-5 rounded-[14px] transition-all duration-300 group-hover:bg-opacity-0">
           <div class="flex items-center gap-4">
@@ -51,6 +51,29 @@
             <div>
               <h3 class="font-bold text-gray-800 text-lg group-hover:text-white transition-colors duration-300">Hábitos Semanais</h3>
               <p class="text-sm text-gray-500 group-hover:text-teal-100 transition-colors duration-300">Planeje sua semana</p>
+            </div>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-300 group-hover:text-white transition-all duration-300 transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </router-link>
+
+      <!-- Monthly Tasks Reference Card -->
+      <router-link 
+        to="/tarefas-mensais" 
+        class="w-full mb-8 group relative overflow-hidden rounded-2xl bg-linear-to-r from-blue-500 to-indigo-500 p-[2px] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-200"
+      >
+        <div class="flex items-center justify-between bg-white px-6 py-5 rounded-[14px] transition-all duration-300 group-hover:bg-opacity-0">
+          <div class="flex items-center gap-4">
+            <div class="bg-blue-100 p-3 rounded-xl text-blue-600 group-hover:bg-white/20 group-hover:text-white transition-colors duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-bold text-gray-800 text-lg group-hover:text-white transition-colors duration-300">Tarefas Mensais</h3>
+              <p class="text-sm text-gray-500 group-hover:text-blue-100 transition-colors duration-300">Planeje seu mês</p>
             </div>
           </div>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-300 group-hover:text-white transition-all duration-300 transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

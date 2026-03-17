@@ -24,6 +24,12 @@ const routes = [
     name: 'HabitosSemanais',
     component: () => import('../views/WeeklyHabits.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/tarefas-mensais',
+    name: 'TarefasMensais',
+    component: () => import('../views/MonthlyTasks.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 
