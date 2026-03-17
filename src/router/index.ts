@@ -30,6 +30,12 @@ const routes = [
     name: 'TarefasMensais',
     component: () => import('../views/MonthlyTasks.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/plano-de-treino',
+    name: 'WorkoutPlan',
+    component: () => import('../views/WorkoutPlan.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 
