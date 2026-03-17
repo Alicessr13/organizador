@@ -36,6 +36,12 @@ const routes = [
     name: 'WorkoutPlan',
     component: () => import('../views/WorkoutPlan.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/skincare',
+    name: 'Skincare',
+    component: () => import('../views/SkincareRoutine.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 
