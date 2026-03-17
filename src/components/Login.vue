@@ -1,21 +1,15 @@
 <template>
-  <div class="min-h-screen bg-[var(--pastel-pink)] flex items-center justify-center p-4">
-    <div v-if="user" class="p-8 rounded-lg shadow-md w-full max-w-md">
-      <h1 class="text-xl font-bold mb-4">Olá, {{ user.email }}!</h1>
-      <p class="mb-6">Você está pronto para organizar suas tarefas.</p>
-      <button @click="logout" class="w-full bg-red-500 text-white p-2 rounded">Sair</button>
-    </div>
-
-    <div v-else class="p-8 rounded-lg shadow-md w-full max-w-md">
-      <h2 class="text-2xl font-bold mb-6 text-center">
-        {{ isSignUp ? 'Criar Conta' : 'Entrar no Planner' }}
-      </h2>
+  <div class="min-h-screen bg-(--pastel-pink) flex items-center justify-center p-4">
+    <div class="p-8 rounded-lg w-full max-w-md">
+      <div class="text-2xl cinzel-decorative-regular font-bold mb-10 text-center">
+        {{ isSignUp ? 'Criar Conta' : 'Entrar no organizador' }}
+      </div>
       
       <form @submit.prevent="handleSubmit" class="space-y-4">
-        <input v-model="email" type="email" placeholder="Seu email" class="w-full p-2 border rounded" required />
-        <input v-model="password" type="password" placeholder="Sua senha" class="w-full p-2 border rounded" required />
+        <input v-model="email" type="email" placeholder="Seu email" class="w-full p-3 border rounded-lg" required />
+        <input v-model="password" type="password" placeholder="Sua senha" class="w-full p-3 border rounded-lg" required />
         
-        <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition">
+        <button type="submit" class="w-full bg-rose-400 text-white p-3 rounded hover:bg-rose-800 transition">
           {{ isSignUp ? 'Cadastrar' : 'Entrar' }}
         </button>
       </form>
@@ -30,26 +24,41 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 
-const { user, login, signUp, logout, fetchUser } = useAuth()
+const { user, login, signUp, fetchUser } = useAuth()
+const router = useRouter()
 
 const email = ref('')
 const password = ref('')
 const isSignUp = ref(false)
 const errorMsg = ref('')
 
-onMounted(() => fetchUser())
+onMounted(async () => {
+  await fetchUser()
+  if (user.value) {
+    router.push('/')
+  }
+})
+
+watch(user, (newUser) => {
+  if (newUser) {
+    router.push('/')
+  }
+})
 
 const handleSubmit = async () => {
   try {
     errorMsg.value = ''
     if (isSignUp.value) {
       await signUp(email.value, password.value)
-      alert('Verifique seu email para confirmar o cadastro!')
+      alert('Cadastro realizado! Redirecionando...')
+      router.push('/')
     } else {
       await login(email.value, password.value)
+      router.push('/')
     }
   } catch (e: any) {
     errorMsg.value = e.message
