@@ -42,6 +42,12 @@ const routes = [
     name: 'Skincare',
     component: () => import('../views/SkincareRoutine.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/lista-de-desejos',
+    name: 'Wishlist',
+    component: () => import('../views/Wishlist.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 
