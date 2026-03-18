@@ -60,6 +60,12 @@ const routes = [
     name: 'ReadingDiary',
     component: () => import('../views/ReadingDiary.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/anotacoes',
+    name: 'Anotacoes',
+    component: () => import('../views/Notes.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 

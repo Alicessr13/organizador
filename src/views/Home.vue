@@ -177,7 +177,7 @@
       <!-- Reading Diary Reference Card -->
       <router-link 
         to="/diario-de-leitura" 
-        class="w-full mb-8 group relative overflow-hidden rounded-2xl bg-linear-to-r from-blue-500 to-indigo-600 p-[2px] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-200"
+        class="w-full mb-4 group relative overflow-hidden rounded-2xl bg-linear-to-r from-blue-500 to-indigo-600 p-[2px] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-200"
       >
         <div class="flex items-center justify-between bg-white px-6 py-5 rounded-[14px] transition-all duration-300 group-hover:bg-opacity-0">
           <div class="flex items-center gap-4">
@@ -189,6 +189,29 @@
             <div>
               <h3 class="font-bold text-gray-800 text-lg group-hover:text-white transition-colors duration-300">Diário de Leitura</h3>
               <p class="text-sm text-gray-500 group-hover:text-indigo-100 transition-colors duration-300">Histórico de livros</p>
+            </div>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-300 group-hover:text-white transition-all duration-300 transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </router-link>
+
+      <!-- Anotações Reference Card -->
+      <router-link 
+        to="/anotacoes" 
+        class="w-full mb-8 group relative overflow-hidden rounded-2xl bg-linear-to-r from-yellow-400 to-amber-500 p-[2px] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-200"
+      >
+        <div class="flex items-center justify-between bg-white px-6 py-5 rounded-[14px] transition-all duration-300 group-hover:bg-opacity-0">
+          <div class="flex items-center gap-4">
+            <div class="bg-amber-100 p-3 rounded-xl text-amber-600 group-hover:bg-white/20 group-hover:text-white transition-colors duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-bold text-gray-800 text-lg group-hover:text-white transition-colors duration-300">Anotações</h3>
+              <p class="text-sm text-gray-500 group-hover:text-amber-100 transition-colors duration-300">Salve recados importantes</p>
             </div>
           </div>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-300 group-hover:text-white transition-all duration-300 transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
