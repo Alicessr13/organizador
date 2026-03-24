@@ -1,123 +1,138 @@
 <template>
-  <div class="min-h-screen bg-linear-to-br from-indigo-50 leading-relaxed text-gray-800 to-purple-100 p-4 md:p-8 flex justify-center items-start">
-    <div class="w-full max-w-3xl bg-white/80 backdrop-blur-xl shadow-2xl rounded-3xl p-6 md:p-10 border border-white/50">
-      <div class="flex items-center justify-between mb-8">
-        <h1 class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-indigo-600 to-purple-600 tracking-tight">
+  <DashboardLayout>
+    <div class="px-6 lg:px-10 py-6 md:py-10 max-w-[1200px] mx-auto flex flex-col h-full relative w-full">
+      <!-- Title & Date Nav -->
+      <div class="grid grid-cols-1 md:grid-cols-3 items-center justify-between mb-10 w-full gap-6">
+        <h1 class="text-[#4a3f44] font-bold text-[1.8rem] text-center md:text-left col-span-1">
           Hábitos Diários
         </h1>
-        <router-link to="/" class="text-indigo-500 hover:text-indigo-700 font-medium flex items-center gap-2 transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-          </svg>
-          Voltar
-        </router-link>
-      </div>
-
-      <!-- Date Navigator -->
-      <div class="flex items-center justify-between mb-8 bg-white/60 p-2 md:p-3 rounded-2xl shadow-sm border border-indigo-50">
-        <button @click="previousDay" class="p-2 md:p-3 hover:bg-white text-indigo-500 hover:text-indigo-700 rounded-xl transition-all hover:shadow-md active:scale-95">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <div class="text-lg md:text-xl font-bold text-gray-700 capitalize">
-          {{ displayDate }}
+        <div class="flex items-center justify-center gap-6 text-[#7a646c] font-bold col-span-1">
+           <button @click="previousDay" class="p-2 hover:bg-white rounded-full transition-colors active:scale-90 relative z-10" title="Dia anterior">
+              <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+           </button>
+           <span class="w-48 text-center text-[15px]">{{ displayDate }}</span>
+           <button @click="nextDay" :disabled="isSelectedDateToday" class="p-2 hover:bg-white rounded-full transition-colors disabled:opacity-30 active:scale-90 relative z-10" title="Próximo dia">
+              <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+           </button>
         </div>
-        <button @click="nextDay" :disabled="isSelectedDateToday" class="p-2 md:p-3 hover:bg-white text-indigo-500 hover:text-indigo-700 rounded-xl transition-all hover:shadow-md active:scale-95 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none disabled:cursor-not-allowed">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
+        <div class="hidden md:block col-span-1"></div>
       </div>
 
-      <!-- Add habit form -->
-      <form @submit.prevent="addHabit" class="flex gap-3 mb-8">
-        <input 
+      <!-- Stats Row -->
+      <div class="flex flex-col md:flex-row w-full gap-5 mb-10">
+        <!-- Progressive -->
+        <div class="flex-1 bg-white rounded-[2rem] p-7 shadow-xs border border-white flex flex-col justify-center">
+           <span class="text-[10px] font-black tracking-[0.15em] text-gray-400 uppercase mb-2">PROGRESSO</span>
+           <span class="text-[1.8rem] font-bold text-[#8c3b58] mb-6 tracking-tight leading-none">{{ progressPercentage }}% concluído</span>
+           <div class="w-full h-3 bg-rose-100 rounded-full overflow-hidden">
+              <div class="h-full bg-[#8c3b58] rounded-full transition-all duration-500" :style="{ width: progressPercentage + '%' }"></div>
+           </div>
+        </div>
+        <!-- Daily Goal -->
+        <div class="flex-1 bg-rose-50/50 rounded-[2rem] p-7 border border-rose-50 flex items-center justify-between">
+           <div class="pr-2">
+              <span class="text-[10px] font-black tracking-[0.15em] text-gray-500 uppercase flex items-center gap-2 mb-2">META DIÁRIA</span>
+              <p class="text-[12px] text-[#7a646c] font-medium leading-relaxed max-w-[170px]">Faltam apenas {{ uncompletedCount }} rituais para um dia perfeito.</p>
+           </div>
+           <!-- Circular progress -->
+           <div class="relative w-[5rem] h-[5rem] shrink-0">
+              <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                <!-- Background Circle -->
+                <path class="text-white fill-none stroke-current stroke-[2.5]" stroke-dasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <!-- Progress Circle -->
+                <path class="text-[#8c3b58] fill-none stroke-current stroke-[2.5]" :stroke-dasharray="`${progressPercentage}, 100`" stroke-linecap="round" style="transition: stroke-dasharray 0.5s ease" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center text-[12px] font-black text-[#4a3f44] tracking-tight">
+                {{ completedCount }}/{{ totalCount }}
+              </div>
+           </div>
+        </div>
+      </div>
+
+      <!-- Add Ritual Input -->
+      <form @submit.prevent="addHabit" class="w-full relative mb-10 shrink-0">
+         <input 
           v-model="newHabitTitle" 
           type="text" 
-          placeholder="Novo hábito (ex: Beber 2L de água)"
-          class="flex-1 px-5 py-4 rounded-xl bg-white/60 border border-indigo-100 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 outline-none transition-all placeholder:text-gray-400 text-gray-700 text-lg shadow-inner"
-        />
-        <button 
+          placeholder="Adicionar um novo ritual..." 
+          class="w-full bg-[#e8e3e6]/50 hover:bg-[#e8e3e6]/70 focus:bg-[#e8e3e6]/80 outline-none text-[#4a3f44] text-sm font-semibold rounded-full py-4 pl-6 pr-32 transition-colors placeholder:text-[#a09499]"
+         />
+         <button 
           type="submit" 
           :disabled="!newHabitTitle.trim()"
-          class="px-6 py-4 bg-linear-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 hover:shadow-indigo-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95 flex items-center justify-center gap-2 text-lg"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-          </svg>
-          <span class="hidden sm:inline">Adicionar</span>
-        </button>
+          class="absolute py-2.5 px-6 right-2 top-1/2 -translate-y-1/2 bg-[#8c3b58] hover:bg-[#7a324b] text-white text-[12px] font-bold rounded-full transition-colors disabled:opacity-50"
+         >
+            Adicionar
+         </button>
       </form>
 
-      <!-- Habits list -->
-      <div v-if="habits.length === 0" class="text-center py-16 text-gray-400 flex flex-col items-center bg-white/40 rounded-2xl border border-dashed border-indigo-200">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mb-4 text-indigo-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-        </svg>
-        <p class="text-xl text-gray-500 font-medium mb-2">Nenhum hábito cadastrado ainda.</p>
-        <p class="text-md">Que tal começar a construir sua rotina hoje?</p>
-      </div>
-
-      <ul v-else class="space-y-4">
-        <li 
+      <!-- Habits List -->
+      <div class="w-full flex flex-col gap-4 pb-20">
+         <div 
           v-for="habit in habits" 
           :key="habit.id"
-          class="group flex items-center gap-4 p-5 rounded-2xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl cursor-pointer"
-          :class="isCompletedOnSelectedDate(habit) ? 'bg-indigo-50/60 border border-indigo-100/50 opacity-80' : 'bg-white shadow-md border border-gray-100'"
           @click="toggleHabit(habit.id)"
-        >
-          <div 
-            class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 border-2"
-            :class="isCompletedOnSelectedDate(habit) ? 'bg-green-500 border-green-500 text-white scale-110 shadow-lg shadow-green-200' : 'bg-gray-50 border-gray-300 text-transparent group-hover:border-indigo-400 group-hover:bg-indigo-50'"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" :class="isCompletedOnSelectedDate(habit) ? 'scale-100' : 'scale-50'" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-            </svg>
-          </div>
-          
-          <span 
-            class="flex-1 text-xl font-medium transition-all duration-300"
-            :class="isCompletedOnSelectedDate(habit) ? 'text-gray-400 line-through decoration-gray-400/50 decoration-2' : 'text-gray-700'"
-          >
-            {{ habit.title }}
-          </span>
+          class="w-full bg-white rounded-full px-6 py-5 flex items-center justify-between shadow-xs border border-white hover:border-rose-50 hover:shadow-sm transition-all cursor-pointer group"
+         >
+            <div class="flex items-center gap-5">
+               <!-- Checkbox -->
+               <div class="w-[26px] h-[26px] rounded-full flex items-center justify-center transition-colors border-[2px]"
+                :class="isCompletedOnSelectedDate(habit) ? 'bg-[#8c3b58] border-[#8c3b58] text-white' : 'border-[#aea2a7] text-transparent'">
+                  <svg class="w-[14px] h-[14px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+               </div>
+               
+               <div class="flex flex-col gap-0.5">
+                 <span class="text-[14px] font-bold transition-all text-[#4a3f44]"
+                  :class="isCompletedOnSelectedDate(habit) ? 'opacity-40 line-through decoration-[#4a3f44]/50' : ''">
+                    {{ habit.title }}
+                 </span>
+                 <div class="flex items-center gap-1.5 text-[9px] font-black tracking-widest uppercase text-gray-400 opacity-80"
+                  :class="isCompletedOnSelectedDate(habit) ? 'opacity-40' : ''">
+                    <svg class="w-[10px] h-[10px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span v-if="habit.subtitle">{{ habit.subtitle }}</span>
+                    <span v-else>{{ isCompletedOnSelectedDate(habit) ? 'Realizado' : 'A realizar' }}</span>
+                 </div>
+               </div>
+            </div>
+            
+            <div v-if="habit.streak" class="px-3 py-1 bg-rose-50 rounded-full text-[10px] font-bold text-[#8c3b58]">
+              {{ habit.streak }}
+            </div>
+         </div>
+      </div>
+      
 
-          <button 
-            @click.stop="removeHabit(habit.id)"
-            class="text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 p-2 rounded-xl hover:bg-red-50"
-            title="Remover hábito"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-            </svg>
-          </button>
-        </li>
-      </ul>
+      <!-- Bottom center sparkles -->
+      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-rose-200/50 pointer-events-none">
+         <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15 9l7 3-7 3-3 7-3-7-7-3 7-3z"/></svg>
+      </div>
+
     </div>
-  </div>
+  </DashboardLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
+import DashboardLayout from '../layouts/DashboardLayout.vue'
 
 interface Habit {
   id: string
   title: string
   completed?: boolean
   completedDates?: string[]
+  subtitle?: string
+  streak?: string
 }
 
-// Em um cenário real, isso viria do Supabase. Aqui usaremos localStorage pro mockup inicial
 const habits = ref<Habit[]>([])
 const newHabitTitle = ref('')
 const selectedDate = ref(new Date())
 
 const getLocalISODate = (date: Date) => {
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  return `${yyyy}-${mm}-${dd}`;
+  const yyyy = date.getFullYear()
+  const mm = String(date.getMonth() + 1).padStart(2, '0')
+  const dd = String(date.getDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
 }
 
 const isSelectedDateToday = computed(() => {
@@ -132,7 +147,6 @@ const displayDate = computed(() => {
     day: '2-digit', 
     month: 'long' 
   })
-  
   return isSelectedDateToday.value ? `Hoje, ${dateStr}` : dateStr
 })
 
@@ -157,9 +171,17 @@ const isCompletedOnSelectedDate = (habit: Habit) => {
   return habit.completedDates?.includes(formattedSelectedDate.value) ?? false
 }
 
+const totalCount = computed(() => habits.value.length)
+const completedCount = computed(() => habits.value.filter(isCompletedOnSelectedDate).length)
+const uncompletedCount = computed(() => totalCount.value - completedCount.value)
+const progressPercentage = computed(() => {
+  if (totalCount.value === 0) return 0
+  return Math.round((completedCount.value / totalCount.value) * 100)
+})
+
 onMounted(() => {
   const saved = localStorage.getItem('@organizador:habits')
-  if (saved) {
+  if (saved && JSON.parse(saved).length > 0) {
     try {
       const parsed = JSON.parse(saved)
       const todayStr = getLocalISODate(new Date())
@@ -174,6 +196,14 @@ onMounted(() => {
     } catch (e) {
       console.error(e)
     }
+  } else {
+    // Inject mock data for empty state
+    habits.value = [
+      { id: crypto.randomUUID(), title: 'tomar remédio', subtitle: '08:00', completedDates: [getLocalISODate(new Date())] },
+      { id: crypto.randomUUID(), title: 'beber água (2L)', subtitle: 'EM ANDAMENTO', streak: '2/4', completedDates: [] },
+      { id: crypto.randomUUID(), title: 'exercícios físicos', subtitle: '30 MIN', completedDates: [] },
+      { id: crypto.randomUUID(), title: 'meditação', subtitle: 'MANHÃ', completedDates: [getLocalISODate(new Date())] },
+    ]
   }
 })
 
@@ -196,22 +226,13 @@ const addHabit = () => {
 const toggleHabit = (id: string) => {
   const habit = habits.value.find(h => h.id === id)
   if (habit) {
-    if (!habit.completedDates) {
-      habit.completedDates = []
-    }
+    if (!habit.completedDates) habit.completedDates = []
     
     const dateStr = formattedSelectedDate.value
     const index = habit.completedDates.indexOf(dateStr)
     
-    if (index === -1) {
-      habit.completedDates.push(dateStr)
-    } else {
-      habit.completedDates.splice(index, 1)
-    }
+    if (index === -1) habit.completedDates.push(dateStr)
+    else habit.completedDates.splice(index, 1)
   }
-}
-
-const removeHabit = (id: string) => {
-  habits.value = habits.value.filter(h => h.id !== id)
 }
 </script>
