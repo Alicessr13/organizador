@@ -20,6 +20,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/habitos/visao-geral',
+    name: 'HabitsOverview',
+    component: () => import('../views/HabitsOverview.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/habitos-semanais',
     name: 'HabitosSemanais',
     component: () => import('../views/WeeklyHabits.vue'),

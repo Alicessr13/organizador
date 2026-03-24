@@ -210,21 +210,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useAuth } from '../composables/useAuth'
 import DashboardLayout from '../layouts/DashboardLayout.vue'
+import { useHabits, type Habit } from '../composables/useHabits'
 
 const { user } = useAuth()
-
-interface Habit {
-  id: string
-  title: string
-  completed?: boolean
-  subtitle?: string
-  completedDates?: string[]
-}
-
-const habits = ref<Habit[]>([])
+const { habits, fetchHabits } = useHabits()
 
 const getLocalISODate = (date: Date) => {
   const yyyy = date.getFullYear()
@@ -236,16 +228,11 @@ const getLocalISODate = (date: Date) => {
 const todayStr = computed(() => getLocalISODate(new Date()))
 
 const isCompletedToday = (habit: Habit) => {
-  return habit.completedDates?.includes(todayStr.value) ?? false
+  return habit.completed_dates?.includes(todayStr.value) ?? false
 }
 
 onMounted(() => {
-  const saved = localStorage.getItem('@organizador:habits')
-  if (saved) {
-    try {
-      habits.value = JSON.parse(saved)
-    } catch(e){}
-  }
+  fetchHabits() // reads from Supabase / memory cache
 })
 
 const totalCount = computed(() => habits.value.length)
@@ -255,5 +242,15 @@ const progressPercentage = computed(() => {
   return Math.round((completedCount.value / totalCount.value) * 100)
 })
 
-const displayHabits = computed(() => habits.value.slice(0, 3))
+const displayHabits = computed(() => {
+  const pending = habits.value.filter(h => !isCompletedToday(h))
+  if (pending.length >= 2) {
+    return pending.slice(0, 2)
+  }
+  if (pending.length === 1) {
+    const completed = habits.value.filter(h => isCompletedToday(h))
+    return [...pending, ...completed].slice(0, 2)
+  }
+  return habits.value.slice(0, 2)
+})
 </script>

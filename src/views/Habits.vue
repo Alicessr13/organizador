@@ -3,9 +3,14 @@
     <div class="px-6 lg:px-10 py-6 md:py-10 max-w-[1200px] mx-auto flex flex-col h-full relative w-full">
       <!-- Title & Date Nav -->
       <div class="grid grid-cols-1 md:grid-cols-3 items-center justify-between mb-10 w-full gap-6">
-        <h1 class="text-[#4a3f44] font-bold text-[1.8rem] text-center md:text-left col-span-1">
-          Hábitos Diários
-        </h1>
+        <div class="flex flex-col md:flex-row items-center gap-4 col-span-1 md:col-span-1">
+          <h1 class="text-[#4a3f44] font-bold text-[1.8rem] text-center md:text-left">
+            Hábitos Diários
+          </h1>
+          <router-link to="/habitos/visao-geral" class="bg-rose-50 text-[#8c3b58] px-4 py-1.5 rounded-full text-[11px] font-black tracking-widest uppercase hover:bg-rose-100 transition-colors shadow-sm whitespace-nowrap hidden md:block">
+            Visão Geral
+          </router-link>
+        </div>
         <div class="flex items-center justify-center gap-6 text-[#7a646c] font-bold col-span-1">
            <button @click="previousDay" class="p-2 hover:bg-white rounded-full transition-colors active:scale-90 relative z-10" title="Dia anterior">
               <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
@@ -89,8 +94,7 @@
                  <div class="flex items-center gap-1.5 text-[9px] font-black tracking-widest uppercase text-gray-400 opacity-80"
                   :class="isCompletedOnSelectedDate(habit) ? 'opacity-40' : ''">
                     <svg class="w-[10px] h-[10px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span v-if="habit.subtitle">{{ habit.subtitle }}</span>
-                    <span v-else>{{ isCompletedOnSelectedDate(habit) ? 'Realizado' : 'A realizar' }}</span>
+                    <span>{{ isCompletedOnSelectedDate(habit) ? 'Realizado' : 'A realizar' }}</span>
                  </div>
                </div>
             </div>
@@ -112,19 +116,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import DashboardLayout from '../layouts/DashboardLayout.vue'
+import { useHabits, type Habit } from '../composables/useHabits'
 
-interface Habit {
-  id: string
-  title: string
-  completed?: boolean
-  completedDates?: string[]
-  subtitle?: string
-  streak?: string
-}
+const route = useRoute()
+const { habits, fetchHabits, addHabit: supabaseAddHabit, toggleHabitDate } = useHabits()
 
-const habits = ref<Habit[]>([])
 const newHabitTitle = ref('')
 const selectedDate = ref(new Date())
 
@@ -168,7 +167,7 @@ const nextDay = () => {
 }
 
 const isCompletedOnSelectedDate = (habit: Habit) => {
-  return habit.completedDates?.includes(formattedSelectedDate.value) ?? false
+  return habit.completed_dates?.includes(formattedSelectedDate.value) ?? false
 }
 
 const totalCount = computed(() => habits.value.length)
@@ -179,60 +178,24 @@ const progressPercentage = computed(() => {
   return Math.round((completedCount.value / totalCount.value) * 100)
 })
 
-onMounted(() => {
-  const saved = localStorage.getItem('@organizador:habits')
-  if (saved && JSON.parse(saved).length > 0) {
-    try {
-      const parsed = JSON.parse(saved)
-      const todayStr = getLocalISODate(new Date())
-      
-      habits.value = parsed.map((h: Habit) => {
-        if (h.completedDates === undefined) {
-          h.completedDates = h.completed ? [todayStr] : []
-          delete h.completed
-        }
-        return h
-      })
-    } catch (e) {
-      console.error(e)
+onMounted(async () => {
+  await fetchHabits(true) // Force fresh fetch when opening this view
+
+  if (route.query.date) {
+    const d = new Date(route.query.date as string + 'T12:00:00')
+    if (!isNaN(d.getTime())) {
+      selectedDate.value = d
     }
-  } else {
-    // Inject mock data for empty state
-    habits.value = [
-      { id: crypto.randomUUID(), title: 'tomar remédio', subtitle: '08:00', completedDates: [getLocalISODate(new Date())] },
-      { id: crypto.randomUUID(), title: 'beber água (2L)', subtitle: 'EM ANDAMENTO', streak: '2/4', completedDates: [] },
-      { id: crypto.randomUUID(), title: 'exercícios físicos', subtitle: '30 MIN', completedDates: [] },
-      { id: crypto.randomUUID(), title: 'meditação', subtitle: 'MANHÃ', completedDates: [getLocalISODate(new Date())] },
-    ]
   }
 })
 
-watch(habits, (newVal) => {
-  localStorage.setItem('@organizador:habits', JSON.stringify(newVal))
-}, { deep: true })
-
-const addHabit = () => {
+const addHabit = async () => {
   if (!newHabitTitle.value.trim()) return
-  
-  habits.value.unshift({
-    id: crypto.randomUUID(),
-    title: newHabitTitle.value.trim(),
-    completedDates: []
-  })
-  
+  await supabaseAddHabit(newHabitTitle.value.trim())
   newHabitTitle.value = ''
 }
 
-const toggleHabit = (id: string) => {
-  const habit = habits.value.find(h => h.id === id)
-  if (habit) {
-    if (!habit.completedDates) habit.completedDates = []
-    
-    const dateStr = formattedSelectedDate.value
-    const index = habit.completedDates.indexOf(dateStr)
-    
-    if (index === -1) habit.completedDates.push(dateStr)
-    else habit.completedDates.splice(index, 1)
-  }
+const toggleHabit = async (id: string) => {
+  await toggleHabitDate(id, formattedSelectedDate.value)
 }
 </script>
